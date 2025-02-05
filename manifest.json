@@ -1,0 +1,40 @@
+{
+  "start_url": "/call-centre",
+  "name": "Tel protocol handler GCCX Prod",
+  "display": "standalone",
+  "short_name": "click-to-dial",
+  "theme_color": "#2f3d58",
+  "background_color": "#2f3d58",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/images/phone-icon_144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/images/ctd_background.png",
+      "sizes": "1200x600",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "pwa background"
+    },
+    {
+      "src": "/images/ctd_background.png",
+      "sizes": "1200x600",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "pwa background"
+    }
+  ],
+  "description": "click on a phone number on any web page and that number will be sent to Genesys cloud for a consult call",
+  "protocol_handlers": [
+    {
+      "protocol": "tel",
+      "url": "/call-centre/tel_pwa?num=%s"
+    }
+  ]
+}

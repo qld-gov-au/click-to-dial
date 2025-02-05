@@ -1,0 +1,28 @@
+body {
+  background-color: #ffffff;
+}
+
+.container_csa_msg {
+    display: none;					/* hidden div */
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    height: 300px;	
+}
+
+
+.tel_pwa_msg {
+    background-color: #ffffff;
+    color: #414141;
+    font-family: "Noto Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+    text-align: center;
+    font-size: 22px;
+}
+
+.tel_pwa_err {
+    background-color: #ffffff;
+    color: #c96b3c;
+    font-family: "Noto Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+    text-align: left;
+    font-size: 18px;
+}
