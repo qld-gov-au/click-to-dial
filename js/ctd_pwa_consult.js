@@ -24,10 +24,10 @@
 /*jslint es6 */
 
 // timeout, in ms, to close PWA window
-const PWA_WIN_TIMEOUT = 5000;
+const PWA_WIN_TIMEOUT = 2000;
 
 // increase time to allow time to copy error message before closing PWA window
-const PWA_WIN_TIMEOUT_ERR = 30000;
+const PWA_WIN_TIMEOUT_ERR = 120000;
 
 // increase time to before displaying click ok to exit in debug mode
 const PWA_WIN_TIMEOUT_DEBUG = 600000;
@@ -35,6 +35,7 @@ const PWA_WIN_TIMEOUT_DEBUG = 600000;
 var DEBUG;
 
 if (window.location.hostname === "localhost") {DEBUG=true;} else {DEBUG=false;}
+//DEBUG = true;
 
 if (DEBUG) { alert(`Open Dev Tools (F12) for now full debuging`); }
 
@@ -54,7 +55,8 @@ window.addEventListener("load", async () => {
 
       console.log("ctd_pwajs::inititialise: windows event: loaded");
       initDivs();
-      await getWindow();
+      let isPwa = await getWindow();
+      if (!isPwa) return;							// exit
       let phoneNumber = await getPhoneNumber();
       let client = initGenesys();
       let genesysClientId = getGenesysClientId();
@@ -70,8 +72,7 @@ window.addEventListener("load", async () => {
       // genesys errors don't return a stack trace, so use e.message for Genesys
       let errMsg = 'stack' in e ? e.stack :  e.message;
 
-      let msg = `<div class="tel_pwa_err">The following error has occured,
-                please screenshot this into an email if you wish to log a job:
+      let msg = `<div class="tel_pwa_err">Referral unsuccessful.<br><br>An error has occurred. Please report this to your Team Leader. 
                 <br><br>${errMsg.replace(/\n/g, "<br>")}</div>`;
 
       await finish(msg, PWA_WIN_TIMEOUT_ERR);
@@ -102,9 +103,11 @@ async function getWindow() {
    if (!isBrowser) {
       window.open("", "_self");         // get control by re-opening window
       window.resizeTo(1000, 500);       // x,y size
+      return true;			// its a pwa invocation
    } else {
-      await finish("See Tech Support for installing this click-to-dial funtion",
+      await finish("If you require support installing click-to-dial, please see your Team Leader.",
         PWA_WIN_TIMEOUT_DEBUG,true);
+      return false;			// direct invocation for install purposes
    }
 }
 
@@ -147,8 +150,11 @@ async function getPhoneNumber(){
   if ( phone === null || phone.length === 0 || phone === undefined) {
       console.log(`ctd_pwajs::checkPhoneNumber() phone number is invalid,
         empty or null string passed`);
-      await finish("Invalid phone number - empty or null string passed",
-        PWA_WIN_TIMEOUT);
+
+      await finish("Referral unsuccessful.<br><br>The referral selected does not " +
+                   "contain a valid phone number. <br><br>If the referral was " +
+                   "initiated from Service Assist, report this to your Team Leader.",
+                    PWA_WIN_TIMEOUT);
   }
 
   let phoneNumber = decodeURIComponent(phone).replaceAll(' ','')
@@ -158,7 +164,9 @@ async function getPhoneNumber(){
   if ( phoneNumber.length === 0 ) {
       console.log(`ctd_pwajs::checkPhoneNumber() phone number does not ` +
         `contain any usefull characters and is invalid: ${phone}`);
-      await finish("Invalid phone number - does not contain dialable numbers",
+      await finish("Referral unsuccessful.<br><br>The referral selected does not " +
+                   "contain a valid phone number.<br><br>If the referral was " +
+                   "initiated from Service Assist, report this to your Team Leader. ",
          PWA_WIN_TIMEOUT);
       return false;
   }
@@ -172,7 +180,10 @@ async function getPhoneNumber(){
       return phoneNumber;
   } else {
       console.log(`ctd_pwajs::checkPhoneNumber() ${phone} NOT a valid number`);
-      await finish(`Invalid phone number: ${phone}`, PWA_WIN_TIMEOUT_ERR);
+      await finish("Referral unsuccessful.<br><br>The referral selected does not " +
+                   "contain a valid phone number.<br><br>If the referral was " +
+                   "initiated from Service Assist, report this to your Team Leader. ",      
+                    PWA_WIN_TIMEOUT_ERR);
   }
 
 }
@@ -224,7 +235,7 @@ function initGenesys() {
   let client = platformClient.ApiClient.instance;
 
   // Persist token in on local storage
-  client.setPersistSettings(true, 'optional_prefix');
+  client.setPersistSettings(true, 'ssq_token_');
 
   client.setEnvironment(platformClient.PureCloudRegionHosts.ap_southeast_2);
 
@@ -264,7 +275,7 @@ function getGenesysClientId() {
 
 async function finish(msg,timeout,justMsg) {
 
-  function sleep(ms) {
+  async function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
@@ -309,9 +320,7 @@ function putCTDmsg(msg,timeout,justMsg) {
     } else {
 
       document.getElementById("csa_msg").innerHTML=
-        `<div class="tel_pwa_msg">${msg}<br><br>
-         Please return to Genesys<br><br>
-         This window will automatically close in ${timeout/1000} seconds</div>`
+        `<div class="tel_pwa_msg">${msg}<br><br>`
     }
 
     document.getElementById("csa_msg").style.display = "flex";
@@ -381,7 +390,8 @@ async function getConversationId(convObj) {
   {
     console.log("ctd_pwajs::getConversationId() Error: null conversation" +
                 "object passed to getConversationId()");
-    await finish("no or null conversation object passed to getConversationId()",
+    await finish("Referral unsuccessful.<br><br>An unknown error has occured. " +
+                 "Please report this to your Team Leader.",
                  PWA_WIN_TIMEOUT_ERR);
     return null;
   }
@@ -390,10 +400,11 @@ async function getConversationId(convObj) {
   if (convObj.entities.length === 0) {
     console.log("ctd_pwajs::getConversationId() Error: no conversations " +
                 "detected, alerting user");
-    await finish("Cannot do consult, you are not currently on a phone call",
+    await finish("Referral unsuccessful.<br><br>A referral cannot be initiated " +
+                  "without an active Genesys interaction.",
                   PWA_WIN_TIMEOUT_ERR);
     return null;
-  }
+  };
 
   let countId=0;
   let convId=0;
@@ -404,10 +415,12 @@ async function getConversationId(convObj) {
     }
   }
 
-  if ( countId > 1) { await finish("Cannot do consult, you are on more than " +
-                                   "one interaction", PWA_WIN_TIMEOUT_ERR) }
-  if ( convId === 0) { await finish("Cannot do consult, you are not " +
-                            "currently on a phone call", PWA_WIN_TIMEOUT_ERR) }
+  if ( countId > 1) { await finish("Referral unsuccessful.<br><br>A referral " +
+                                    "cannot be initiated with more than one active "+
+                                    "Genesys interaction.", PWA_WIN_TIMEOUT_ERR) };
+  if ( convId === 0) { await finish("Referral unsuccessful.<br><br>A referral " + 
+                                     "cannot be initiated without an active " +
+                                     "Genesys interaction.", PWA_WIN_TIMEOUT_ERR) };
 
   console.log('ctd_pwajs::getConversationId() conversation found:',convId);
 
@@ -426,12 +439,22 @@ async function getConversationId(convObj) {
 
 async function getCustomerId (convObj) {
 
-  let customerId = null;              // caller must check for null
+  let customerId = null;
+
+  // convObj = null			// testing null convObj error handling
 
   if ( convObj === undefined || convObj === null || convObj === "")
   {
     console.log("ctd_pwajs::getAgentId() no or null conversation object" +
                 "passed to getAgentId()");
+
+    await finish("Referral unsuccessful.<br><br>" +
+                 "An unknown error has occured. Please report this to your Team Leader.",
+                  PWA_WIN_TIMEOUT_ERR);
+
+ 
+
+
     return null;
   }
 
@@ -466,7 +489,7 @@ async function getCustomerId (convObj) {
   if ( customerId === null ) {
      await finish("Cannot do consult, there are no customers on the call",
      PWA_WIN_TIMEOUT_ERR);
-  }
+  };
 
   console.log('ctd_pwajs::getCustomerId() customer id found:',customerId);
 
@@ -498,6 +521,8 @@ async function getCustomerId (convObj) {
 ----------------------------------------------------------------------------- */
 
 async function consult(phoneNumber) {
+
+  //throw new Error("testing error handling")
 
   console.log("ctd_pwajs::consult() entry, with phone number:",phoneNumber);
 
@@ -543,8 +568,8 @@ async function consult(phoneNumber) {
     console.log(`ctd_pwajs::consult() success! data: ` +
                      `${JSON.stringify(data, null, 2)}`);
 
-    await finish(`Dialing ${phoneNumber} for now, please return to Genesys` ,
-                 PWA_WIN_TIMEOUT);
+    await finish(`Referral initiated.<br><br>Navigate to Genesys to manage 
+                 the referral. ` , PWA_WIN_TIMEOUT);
 
   }
 
@@ -596,7 +621,7 @@ function getRedirectURL() {
     console.log(`ctd_pwajs::getRedirectURL() no custom redirect matched, ` +
                 `using standard redirect:`,redirectUri);
 
-  }
+  };
 
   return redirectUri;
 }
