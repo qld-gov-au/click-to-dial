@@ -1,12 +1,10 @@
 {
-  "start_url": "/",
-  "name": "Tel protocol handler for GCCX local",
+  "name": "Genesys Click-to-Dial",
+  "short_name": "Click-to-Dial",
+  "start_url": "./index.html",
   "display": "standalone",
-  "short_name": "click-to-dial",
-  "theme_color": "#2f3d58",
-  "background_color": "#2f3d58",
-  "orientation": "any",
-
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
   "icons": [
     {
       "src": "/images/phone-icon_144x144.png",
@@ -31,14 +29,10 @@
       "label": "pwa background"
     }
   ],
-
-  "description" : "click on a phone number on any web page and that number will be sent to Genesys cloud for a consult call",
-    
   "protocol_handlers": [
     {
       "protocol": "tel",
-      "url": "/click-to-dial/tel_pwa_local.html?num=%s"
+      "url": "/click-to-dial/tel_pwa?num=%s"
     }
   ]
-
 }

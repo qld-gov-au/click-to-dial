@@ -1,0 +1,22 @@
+{
+  "name": "genesys-click-to-dial",
+  "version": "1.0.0",
+  "description": "A PWA for handling tel protocol with Genesys Cloud.",
+  "main": "src/js/index.js",
+  "scripts": {
+    "build": "node esbuild.config.js",
+    "dev": "esbuild src/js/index.js --bundle --outfile=dist/bundle.js --servedir=dist --watch",
+    "serve": "esbuild src/js/index.js --bundle --outfile=dist/bundle.js --servedir=dist",
+    "http-serve": "http-server dist -c-1 -o"
+  },
+  "dependencies": {
+    "esbuild": "^0.25.2",
+    "purecloud-platform-client-v2": "^218.1.0",
+    "vite": "^6.2.5"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  },
+  "author": "Karl Hearne",
+  "license": "MIT"
+}
