@@ -37,36 +37,9 @@ This document provides details on setting up and running the application locally
 
 ---
 
-## Testing Locally
+## Testing
 
-When testing the application locally, keep the following in mind:
-
-### Running in Browser Mode
-- The application is designed to run as a PWA. If it is not installed as a PWA, the `manageWindow` function will throw an error in production mode.
-- During development (`npm run dev`), the application will log a warning instead of throwing an error, allowing you to test in a browser tab.
-
-### Query Parameters
-- The application expects a `num` or `state` query parameter in the URL to provide the phone number.
-- Example URL for testing:
-  ```
-  http://127.0.0.1:8000/index.html?num=+61400000000
-  ```
-- If the `num` or `state` parameter is missing, the application will log a warning and exit gracefully without throwing an error.
-
-### Service Worker
-- The service worker (`service-worker.js`) will cache the necessary files (`index.html`, `bundle.js`, `styles/tel_pwa.css`) for offline functionality.
-- Ensure the service worker is registered successfully in the browser console.
-
-### Development Mode
-- Use `npm run dev` to start the development server. This will serve the application locally and watch for changes.
-- The application will bypass certain production checks (e.g., PWA installation requirement) to facilitate testing.
-
-### Production Mode
-- Use `npm run build` to build the application for production.
-- Serve the production build using `npm run http-serve`. The application will enforce PWA installation in this mode.
-
-### Error Handling
-- Errors are displayed in the `csa_msg` div on the page. Check the browser console for detailed error logs.
+For details on testing the application, including unit tests and manual testing scenarios, refer to the [Testing Guide](./TESTING.md).
 
 ---
 
@@ -88,27 +61,6 @@ When testing the application locally, keep the following in mind:
 
 5. **Dependencies**:
    - Updates to `node_modules` require restarting the development server.
-
----
-
-## Testing Scenarios
-
-1. **Basic Functionality**:
-   - Click on one of the phone numbers on the PWA page, or any website that has clickable phone numbers.
-   - Verify that the PWA is launched and handles the `tel:` protocol correctly.
-
-2. **Cross-Browser Testing**:
-   - Test the PWA in multiple browsers (e.g., Chrome, Edge, Firefox) to ensure compatibility.
-
-3. **Offline Functionality**:
-   - Test the PWA's behavior offline by disabling the network in the browser's developer tools.
-   - Ensure that cached resources (e.g., `index.html`, CSS, JS) load correctly.
-
-4. **Responsive Design**:
-   - Test the PWA on devices with different screen sizes (e.g., desktop, tablet, mobile) to ensure it is responsive.
-
-5. **Error Handling**:
-   - Test edge cases, such as invalid `tel:` links or missing resources, to ensure the PWA handles errors gracefully.
 
 ---
 

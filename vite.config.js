@@ -5,6 +5,7 @@ export default defineConfig({
     outDir: 'dist', // Specifies the output directory for the production build
   },
   server: {
-    open: true, // Automatically opens the browser when the development server starts
-  }
+    open: false, // Prevent the browser from opening automatically during tests
+    port: 8080, // Change to a different port
+  },
 });
