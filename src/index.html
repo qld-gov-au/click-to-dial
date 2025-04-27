@@ -2,11 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="utf-8"/>
-  <meta name="genesys-env" content="GENESYS OAUTH CLIENT ID">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="genesys-env" content="d82d8d5c-bf6f-48fb-8a47-d908cb90ece6">
   <title>PWA tel protocol handler</title>
-  <link rel="manifest" href="./manifest.json" crossorigin="use-credentials">
+  <link rel="icon" type="image/x-icon" href="./images/phone-icon_144x144.png">
+  <script src="https://cdn.jsdelivr.net/npm/purecloud-platform-client-v2/dist/web-cjs/purecloud-platform-client-v2.min.js"></script>
+  <script type="module" src="./index.js"></script>
   <link rel="stylesheet" href="./styles/tel_pwa.css">
-  <script type="module" src="./bundle.js"></script>
+  <link rel="manifest" href="./manifest.webmanifest" crossorigin="use-credentials">
 </head>
 <body>
   <div id="app">

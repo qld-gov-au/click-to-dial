@@ -79,7 +79,7 @@ module.exports = defineConfig({
     defaultCommandTimeout: 10000, // Increase timeout to 10 seconds
     responseTimeout: 10000, // Increase response timeout to 10 seconds
     supportFile: 'cypress/support/index.js', // Path to the support file
-    specPattern: 'src/js/**/*.spec.js', // Updated to include spec files in the `src/js` folder
+    specPattern: 'src/**/*.spec.js', // Updated to include spec files in the `src/js` folder
   },
   video: false, // Disable video recording for faster test runs
   screenshotsFolder: 'cypress/screenshots', // Folder for screenshots

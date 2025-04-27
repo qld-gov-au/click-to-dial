@@ -1,3 +1,24 @@
+import { finish } from './windowUtils.js';
+import { PWA_WIN_TIMEOUT_ERR } from '../index.js';
+
+/* -----------------------------------------------------------------------------
+
+  Agent does not have token (but logged in Genesys eg cookie)
+  * First invoke of this page, num=%s is passed by windows tel protocol launcher
+  * Second invoke occurs after redirect from GenesyLogin(redirect_uri) num
+    in state paramter
+
+  Agent has token eg previously got token from genesyslogin()
+  * num=%s is passed by windows tel protocol launcher.
+  * no redirect occurs
+
+  Don't log OAUth token eg console.log(window.href)
+
+  Check its at least a numeric only string - too hard to check for all valid
+    phone number patterns if international is included.
+
+----------------------------------------------------------------------------- */
+
 // Extract the phone number from URL parameters
 export function extractPhoneNumberFromURL() {
   const URLParams = new URLSearchParams(window.location.search);
@@ -37,8 +58,8 @@ export function validatePhoneNumber(phone) {
     .replaceAll('(', '')
     .replaceAll(')', '')
     .replaceAll('-', '')
-    .replace('tel:', '')
-    .replace('TEL:', '');
+    .replace('tel://', '')
+    .replace('TEL://', '');
 
   if (phoneNumber.length === 0) {
     console.log(
@@ -64,6 +85,11 @@ export function isPhoneNumberValid(phoneNumber) {
     console.log(
       `ctd_pwajs::checkPhoneNumber() NOT a valid number: ${phoneNumber}`
     );
+    finish("Referral unsuccessful.<br><br>The referral selected does not " +
+                 "contain a valid phone number.<br><br>If the referral was " +
+                 "initiated from Service Assist, report this to your Team Leader. ",      
+                  PWA_WIN_TIMEOUT_ERR);
+
     throw new Error(`Invalid phone number: ${phoneNumber}`);
   }
 }
